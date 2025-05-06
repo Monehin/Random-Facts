@@ -19,7 +19,7 @@ An Angular 19 app that fetches, displays, and manages "useless" and "history" 
 
 ## Live Demo
 
-Try it live on Vercel: [https://random-facts-a5lrfmue2-monehins-projects.vercel.app/](https://random-facts-a5lrfmue2-monehins-projects.vercel.app/)
+Try it live on Vercel:[https://random-facts-ruby.vercel.app/](https://random-facts-ruby.vercel.app/)
 
 ## Setup & Run
 
