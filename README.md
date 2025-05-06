@@ -1,6 +1,6 @@
 # Random Facts Dashboard
 
-An Angular 19 app that fetches, displays, and manages “useless” and “history” facts. Designed for extensibility, responsiveness, and polished UX with unit and end‑to‑end tests.
+An Angular 19 app that fetches, displays, and manages "useless" and "history" facts. Designed for extensibility, responsiveness, and polished UX—complete with unit and end‑to‑end tests.
 
 ## Features
 
@@ -11,13 +11,15 @@ An Angular 19 app that fetches, displays, and manages “useless” and “his
 * **Random Fact Viewer**
 
   * Loading skeleton and error states
-* **Favorites Management**
-
-  * Add/remove/clear favorites persisted in `localStorage`
-  * Recent‑picks preview
+* **Favorites Management**: add, remove, clear, recent picks
 * **Search Autocomplete** over saved favorites
-* **Responsive Layouts**: List/grid toggle, mobile‑friendly views
-* **Accessibility**: keyboard support and ARIA roles
+* **Responsive List/Grid** views with select and bulk-delete
+* **Animations** for smooth transitions
+* **Unit Tests** (Karma/Jasmine) and **E2E Tests** (Cypress)
+
+## Live Demo
+
+Try it live on Vercel: [https://random-facts-a5lrfmue2-monehins-projects.vercel.app/](https://random-facts-a5lrfmue2-monehins-projects.vercel.app/)
 
 ## Setup & Run
 
@@ -26,6 +28,7 @@ An Angular 19 app that fetches, displays, and manages “useless” and “his
    ```bash
    npm install
    ```
+
 2. **Run development server**
 
    ```bash
@@ -49,15 +52,32 @@ An Angular 19 app that fetches, displays, and manages “useless” and “his
 
 ## Extensibility
 
-To add a new fact source, in `FactsService` add your key to the `sources` record:
+**Current approach (simple registry):**
 
-```ts
-this.sources['newKey'] = {
-  displayName: 'New API',
-  fetchOne: () => this.http.get<...>('YOUR_URL').pipe(
-    map(...), catchError(...)
-  )
-};
-```
+* All sources live in a `sources: Record<string,SourceDef>` map inside `FactsService`.
+* Switching source just changes an `activeKey` used by `fetchRandom()`.
 
-The dropdown will pick it up automatically.
+## Improvements
+
+* As the number of APIs grows, a single map in one service can become hard to maintain.
+* Adding per-source caching, retry policies, authentication, or configuration will clutter this file.
+
+**Future improved design:**
+
+1. **Provider-based plugin system**
+
+   * Define an `InjectionToken<SourceDef>` and allow each source to register itself via Angular DI.
+   * Each source lives in its own file/module with its own service implementing a `FactSource` interface.
+   * At bootstrap, Angular collects all `FactSource` providers into an array.
+2. **Per-source configuration**
+
+   * Move API URLs, headers, cache settings into environment or a config service.
+   * Allow each source to declare its own retry, backoff, or caching strategy.
+3. **Lazy loading & feature modules**
+
+   * Put each source in its own Angular feature module that can be lazy‑loaded when selected.
+   * Reduces initial bundle size when only one source is needed.
+4. **Testing & isolation**
+
+   * Each `FactSourceService` can be tested in isolation, with its own mocks.
+   * The core `FactsService` simply iterates over injected sources.
