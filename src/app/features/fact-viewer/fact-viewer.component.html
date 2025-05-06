@@ -1,0 +1,80 @@
+<div class="max-w-lg mx-auto space-y-6 p-4">
+  <div class="flex space-x-3 items-center">
+    <!-- Styled dropdown -->
+    <div class="relative inline-block w-40">
+      <select
+        id="sourceSelect" 
+        [value]="currentSource"
+        (change)="onSourceChange($any($event.target).value)"
+        class="block w-full bg-white border border-gray-300 rounded-lg appearance-none pr-8 pl-3 py-2
+               hover:border-gray-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        aria-label="Select fact source"
+      >
+        <option *ngFor="let s of sourceOptions" [value]="s.key">{{ s.name }}</option>
+      </select>
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+    <button
+      (click)="loadFact()"
+      [disabled]="loading"
+      class="flex-1 py-3 bg-indigo-600 text-white font-medium rounded-xl shadow hover:bg-indigo-700 disabled:opacity-50 transition"
+    >
+      New Fact
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <p *ngIf="error" class="text-center text-red-500">{{ error }}</p>
+
+  <!-- Loader Skeleton -->
+  <div *ngIf="loading" class="space-y-3 animate-pulse">
+    <div class="h-5 bg-gray-200 rounded w-5/6 mx-auto"></div>
+    <div class="h-5 bg-gray-200 rounded w-4/6 mx-auto"></div>
+    <div class="h-5 bg-gray-200 rounded w-3/6 mx-auto"></div>
+  </div>
+
+  <!-- Fact Card -->
+  <div
+    *ngIf="!loading && fact"
+    @fadeEnter
+    class="border p-6 rounded-2xl shadow-lg bg-white space-y-4"
+  >
+    <p class="text-gray-800 text-center text-lg break-words">
+      {{ fact.text }}
+    </p>
+    <div class="text-center">
+      <button
+        *ngIf="!isFavorite"
+        (click)="saveFavorite()"
+        class="inline-flex items-center px-5 py-2 bg-indigo-600 text-white font-semibold rounded-full shadow-md hover:bg-indigo-700 transition"
+      >
+        <span class="ml-2">Add to Favorites</span>
+      </button>
+      <button
+        *ngIf="isFavorite"
+        disabled
+        class="inline-flex items-center px-5 py-2 bg-gray-200 text-gray-700 font-semibold rounded-full shadow-inner transition"
+      >
+        <span class="ml-2">Added to Favorites</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Autocomplete -->
+  <app-search
+    [favorites]="recentFavorites"
+    (searchSubmitted)="onSearchSelect($event)"
+  ></app-search>
+
+  <!-- Recently Added Preview -->
+  <app-recently-added
+    [favorites]="recentFavorites"
+    (delete)="removeFavorite($event)"
+    (factSelected)="onSearchSelect($event)"
+  ></app-recently-added>
+
+</div>
