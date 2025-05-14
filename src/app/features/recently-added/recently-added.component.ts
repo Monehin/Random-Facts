@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { Fact } from '../../shared/fact.model';
+import { Fact } from '../../types/fact.model';
 import { FactsService } from '../../core/facts.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class RecentlyAddedComponent {
     private facts: FactsService,
     public router: Router
   ) {
-    this.facts.favorites.subscribe(favs => {
+    this.facts.favorites.subscribe((favs) => {
       this.allFavorites = favs;
     });
   }

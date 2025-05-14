@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
       <a routerLink="/favorites" class="px-2 hover:underline">Favorites</a>
     </nav>
     <router-outlet></router-outlet>
-  `
+  `,
 })
 export class AppComponent {
   title = 'Random Facts Dashboard';

@@ -1,0 +1,21 @@
+{
+    "uselessfacts": {
+      "displayName": "Useless Facts",
+      "url": "https://uselessfacts.jsph.pl/random.json?language=en"
+    },
+    "history": {
+      "displayName": "History Facts",
+      "samples": [
+        {
+          "id": "h1",
+          "text": "Apollo 11 landed on the Moon in 1969.",
+          "source": "history"
+        },
+        {
+          "id": "h2",
+          "text": "The Great Fire of London was in 1666.",
+          "source": "history"
+        }
+      ]
+    }
+}

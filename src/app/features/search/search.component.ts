@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { startWith, map, Observable } from 'rxjs';
-import { Fact } from '../../shared/fact.model';
+import { Fact } from '../../types/fact.model';
 
 @Component({
   selector: 'app-search',
@@ -17,11 +17,9 @@ export default class SearchComponent {
   control = new FormControl('');
   suggestions$: Observable<Fact[]> = this.control.valueChanges.pipe(
     startWith(''),
-    map(q => {
+    map((q) => {
       const lower = (q || '').toLowerCase();
-      return this.favorites.filter(f =>
-        f.text.toLowerCase().includes(lower)
-      );
+      return this.favorites.filter((f) => f.text.toLowerCase().includes(lower));
     })
   );
 

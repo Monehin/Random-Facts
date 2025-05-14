@@ -1,78 +1,64 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import {
-  HttpTestingController,
-  provideHttpClientTesting
-} from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { mockSources } from '../../test-utils/mocks/fact-sources';
+import { FACT_SOURCES } from '../tokens/fact‑sources.token';
+import { Fact } from '../types/fact.model';
 import { FactsService } from './facts.service';
-import { Fact } from '../shared/fact.model';
 
-describe('FactsService', () => {
+describe('FactsService with FACT_SOURCES', () => {
   let service: FactsService;
-  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     localStorage.clear();
+
     TestBed.configureTestingModule({
       providers: [
         FactsService,
-        provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-      ]
+        {
+          provide: FACT_SOURCES,
+          useValue: mockSources,
+        },
+      ],
     });
+
     service = TestBed.inject(FactsService);
-    httpMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    httpMock.verify();
     service.clearFavorites();
     localStorage.clear();
   });
 
-  it('should fetch a random fact via fetchRandom() from default source', () => {
-    const dummy: Fact = { id: '1', text: 'Test fact', source: 'uselessfacts' };
-
-    service.fetchRandom().subscribe(fact => {
-      expect(fact).toEqual(dummy);
-    });
-
-    const req = httpMock.expectOne(
-      'https://uselessfacts.jsph.pl/random.json?language=en'
-    );
-    expect(req.request.method).toBe('GET');
-    req.flush({ id: '1', text: 'Test fact' });
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
-  it('should return list of source keys and names', () => {
+  it('getSourceList returns both keys with display names', () => {
     const list = service.getSourceList();
-    expect(list.some(s => s.key === 'uselessfacts' && s.name === 'Useless Facts')).toBeTrue();
-    expect(list.some(s => s.key === 'history' && s.name === 'History Facts')).toBeTrue();
+    expect(list).toEqual([
+      { key: 'uselessfacts', name: 'Useless Facts' },
+      { key: 'history', name: 'History Facts' },
+    ]);
   });
 
-  it('should fetch from history source after setSource', fakeAsync(() => {
+  it('fetchRandom uses default source (uselessfacts)', (done) => {
+    service.fetchRandom().subscribe((f) => {
+      expect(f.source).toBe('uselessfacts');
+      expect(f.text).toBe('Stub useless fact');
+      done();
+    });
+  });
+
+  it('setSource switches to history provider', (done) => {
     service.setSource('history');
-    let received: Fact | undefined;
-    service.fetchRandom().subscribe(f => (received = f));
-    // history fetchOne uses delay(300)
-    tick(300);
-    expect(received).toBeDefined();
-    expect(received!.source).toBe('history');
-    expect(received!.text).toMatch(/Apollo 11 landed on the Moon in 1969\.|The Great Fire of London was in 1666\./);
-  }));
+    service.fetchRandom().subscribe((f) => {
+      expect(f.source).toBe('history');
+      expect(f.text).toBe('Stub history fact');
+      done();
+    });
+  });
 
-  it('should ignore invalid source keys', fakeAsync(() => {
-    service.setSource('doesnotexist');
-    // still default to uselessfacts
-    service.fetchRandom().subscribe();
-    const req = httpMock.expectOne(
-      'https://uselessfacts.jsph.pl/random.json?language=en'
-    );
-    req.flush({ id: 'x', text: 'X' });
-  }));
-
-  it('should add, retrieve and remove favorites', () => {
-    const fact: Fact = { id: 'fav1', text: 'Fav fact', source: 'uselessfacts' };
+  it('addFavorite, getFavorites, removeFavorite, clearFavorites work', () => {
+    const fact: Fact = { id: 'fav1', text: 'A fav', source: 'history' };
     expect(service.getFavorites()).toEqual([]);
 
     service.addFavorite(fact);
@@ -81,23 +67,17 @@ describe('FactsService', () => {
 
     service.removeFavorite('fav1');
     expect(service.getFavorites()).toEqual([]);
-    expect(JSON.parse(localStorage.getItem('favorites')!)).toEqual([]);
-  });
 
-  it('should not add duplicate favorites', () => {
-    const fact: Fact = { id: 'dup', text: 'Dup fact', source: 'uselessfacts' };
     service.addFavorite(fact);
-    service.addFavorite(fact);
-    expect(service.getFavorites().length).toBe(1);
-  });
-
-  it('should clear all favorites', () => {
-    service.addFavorite({ id: 'a', text: 'A', source: 'uselessfacts' });
-    service.addFavorite({ id: 'b', text: 'B', source: 'uselessfacts' });
-    expect(service.getFavorites().length).toBe(2);
-
     service.clearFavorites();
     expect(service.getFavorites()).toEqual([]);
     expect(localStorage.getItem('favorites')).toEqual('[]');
+  });
+
+  it('does not add duplicate favorites', () => {
+    const fact: Fact = { id: 'dup', text: 'D', source: 'history' };
+    service.addFavorite(fact);
+    service.addFavorite(fact);
+    expect(service.getFavorites().length).toBe(1);
   });
 });

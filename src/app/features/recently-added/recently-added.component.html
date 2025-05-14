@@ -1,11 +1,13 @@
 <section *ngIf="favorites.length" class="pt-6 border-b border-gray-200">
   <div class="flex items-center justify-between m-3">
     <h3 class="text-xl font-semibold">Latest Picks</h3>
-    <a routerLink="/favorites" 
-       (keydown.enter)="router.navigate(['/favorites'])"
-       class="text-sm text-indigo-600 hover:underline transition"
-       role="link"
-       tabindex="0">
+    <a
+      routerLink="/favorites"
+      (keydown.enter)="router.navigate(['/favorites'])"
+      class="text-sm text-indigo-600 hover:underline transition"
+      role="link"
+      tabindex="0"
+    >
       View All ({{ allFavorites.length }})
     </a>
   </div>
@@ -24,7 +26,7 @@
         </div>
         <div class="h-full flex items-center justify-center">
           <p class="text-center text-sm text-gray-800 break-all whitespace-normal">
-            {{ fav.text.length > 100 ? (fav.text | slice:0:100) + '…' : fav.text }}
+            {{ fav.text.length > 100 ? (fav.text | slice: 0 : 100) + '…' : fav.text }}
           </p>
         </div>
         <button
@@ -33,7 +35,9 @@
           class="absolute top-2 right-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full transition p-1"
           aria-label="Remove favorite"
           type="button"
-        >✕</button>
+        >
+          ✕
+        </button>
       </div>
     </ng-container>
   </div>

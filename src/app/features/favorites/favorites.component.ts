@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { combineLatest, startWith, map, Observable } from 'rxjs';
 import { FactsService } from '../../core/facts.service';
-import { Fact } from '../../shared/fact.model';
+import { Fact } from '../../types/fact.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,13 +32,11 @@ export class FavoritesComponent implements OnInit {
     this.favorites$ = this.facts.favorites;
     this.filteredFavorites$ = combineLatest([
       this.favorites$,
-      this.searchControl.valueChanges.pipe(startWith(''))
+      this.searchControl.valueChanges.pipe(startWith('')),
     ]).pipe(
       map(([list, q]) => {
         const lower = (q || '').toLowerCase();
-        return lower
-          ? list.filter(f => f.text.toLowerCase().includes(lower))
-          : list;
+        return lower ? list.filter((f) => f.text.toLowerCase().includes(lower)) : list;
       })
     );
   }
@@ -54,7 +52,7 @@ export class FavoritesComponent implements OnInit {
   }
 
   deleteSelected() {
-    this.selected.forEach(id => this.facts.removeFavorite(id));
+    this.selected.forEach((id) => this.facts.removeFavorite(id));
     this.selected.clear();
     this.selectMode = false;
   }

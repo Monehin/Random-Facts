@@ -4,6 +4,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { FactsService } from '../../core/facts.service';
 import { provideRouter } from '@angular/router';
+import { FACT_SOURCES } from '../../tokens/fact‑sources.token';
+import { mockSources } from '../../../test-utils/mocks/fact-sources';
 
 describe('RecentlyAddedComponent', () => {
   let fixture: ComponentFixture<RecentlyAddedComponent>;
@@ -16,8 +18,9 @@ describe('RecentlyAddedComponent', () => {
         FactsService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        provideRouter([])
-      ]
+        provideRouter([]),
+        { provide: FACT_SOURCES, useValue: mockSources },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RecentlyAddedComponent);

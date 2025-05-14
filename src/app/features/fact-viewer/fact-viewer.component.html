@@ -3,11 +3,10 @@
     <!-- Styled dropdown -->
     <div class="relative inline-block w-40">
       <select
-        id="sourceSelect" 
+        id="sourceSelect"
         [value]="currentSource"
         (change)="onSourceChange($any($event.target).value)"
-        class="block w-full bg-white border border-gray-300 rounded-lg appearance-none pr-8 pl-3 py-2
-               hover:border-gray-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        class="block w-full bg-white border border-gray-300 rounded-lg appearance-none pr-8 pl-3 py-2 hover:border-gray-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         aria-label="Select fact source"
       >
         <option *ngFor="let s of sourceOptions" [value]="s.key">{{ s.name }}</option>
@@ -38,11 +37,7 @@
   </div>
 
   <!-- Fact Card -->
-  <div
-    *ngIf="!loading && fact"
-    @fadeEnter
-    class="border p-6 rounded-2xl shadow-lg bg-white space-y-4"
-  >
+  <div *ngIf="!loading && fact" @fadeEnter class="border p-6 rounded-2xl shadow-lg bg-white space-y-4">
     <p class="text-gray-800 text-center text-lg break-words">
       {{ fact.text }}
     </p>
@@ -65,10 +60,7 @@
   </div>
 
   <!-- Search Autocomplete -->
-  <app-search
-    [favorites]="recentFavorites"
-    (searchSubmitted)="onSearchSelect($event)"
-  ></app-search>
+  <app-search [favorites]="recentFavorites" (searchSubmitted)="onSearchSelect($event)"></app-search>
 
   <!-- Recently Added Preview -->
   <app-recently-added
@@ -76,5 +68,4 @@
     (delete)="removeFavorite($event)"
     (factSelected)="onSearchSelect($event)"
   ></app-recently-added>
-
 </div>
